@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import pg from "pg";
 import cors from "cors";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcryptjs from 'bcryptjs';
 
 const app = express();
 const port = 4000;
@@ -31,7 +31,8 @@ app.post('/signup', async (req, res) => {
             return res.status(400).json({ error: 'User with this email already exists' });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const salt = await bcryptjs.genSalt(10); // Generate salt
+        const hashedPassword = await bcryptjs.hash(password, salt); // Hash password
         await db.query(
             'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
             [name, email, hashedPassword]
@@ -44,35 +45,35 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-  // Login route
-  app.post('/login', async (req, res) => {
+// Login route
+app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-      const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-      if (result.rows.length > 0) {
-        const user = result.rows[0];
-        if (await bcrypt.compare(password, user.password)) {
-          const token = jwt.sign(
-            { 
-              userId: user.id,
-              email: user.email,
-              name: user.name
-            }, 
-            'your_jwt_secret',
-            { expiresIn: '1h' }
-          );
-          res.json({ token });
+        const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (result.rows.length > 0) {
+            const user = result.rows[0];
+            if (await bcryptjs.compare(password, user.password)) { // Changed to bcryptjs.compare
+                const token = jwt.sign(
+                    { 
+                        userId: user.id,
+                        email: user.email,
+                        name: user.name
+                    }, 
+                    'your_jwt_secret',
+                    { expiresIn: '1h' }
+                );
+                res.json({ token });
+            } else {
+                res.status(400).json({ error: 'Invalid credentials' });
+            }
         } else {
-          res.status(400).json({ error: 'Invalid credentials' });
+            res.status(400).json({ error: 'User not found' });
         }
-      } else {
-        res.status(400).json({ error: 'User not found' });
-      }
     } catch (error) {
-      console.error('Error logging in:', error);
-      res.status(500).json({ error: 'An error occurred while logging in' });
+        console.error('Error logging in:', error);
+        res.status(500).json({ error: 'An error occurred while logging in' });
     }
-  });
+});
   
 
 // Get trips for a specific user
