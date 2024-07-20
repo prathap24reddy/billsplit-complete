@@ -7,8 +7,9 @@ import bcryptjs from 'bcryptjs';
 import env from 'dotenv';
 
 const app = express();
-const port = 4000;
 env.config();
+const port = process.env.PORT||4000;
+
 
 const db = new pg.Client({
     user: process.env.DB_USER,
