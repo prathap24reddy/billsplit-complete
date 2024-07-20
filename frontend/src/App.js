@@ -9,6 +9,7 @@ import Footer from "./Footer";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
+  const baseAPI="https://billsplit-i7tp.onrender.com";
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -48,11 +49,11 @@ function App() {
         <Routes>
           <Route 
             path="/" 
-            element={isAuthenticated ? <BillSplit userData={userData} /> : <Navigate to="/login" />} 
+            element={isAuthenticated ? <BillSplit userData={userData} baseAPI={baseAPI}/> : <Navigate to="/login" />} 
           />
           <Route 
             path="/login" 
-            element={!isAuthenticated ? <AuthPage onLogin={handleLogin} onSignup={handleLogin} /> : <Navigate to="/" />} 
+            element={!isAuthenticated ? <AuthPage onLogin={handleLogin} onSignup={handleLogin} baseAPI={baseAPI}/> : <Navigate to="/" />} 
           />
         </Routes>
         <Footer />

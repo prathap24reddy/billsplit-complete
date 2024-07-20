@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function TripManager({ onTripSelect, userData }) {
+function TripManager({ onTripSelect, userData, baseAPI }) {
     // console.log(userData);
     const [trips, setTrips] = useState([]);
     const [newTripName, setNewTripName] = useState('');
@@ -15,7 +15,7 @@ function TripManager({ onTripSelect, userData }) {
 
     const fetchUserTrips = async (userId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/user-trips/${userId}`);
+            const response = await axios.get(`${baseAPI}/user-trips/${userId}`);
             setTrips(response.data);
         } catch (error) {
             console.error('Error fetching user trips:', error);
@@ -27,7 +27,7 @@ function TripManager({ onTripSelect, userData }) {
         if (!newTripName.trim()) return;
 
         try {
-            const response = await axios.post('http://localhost:4000/trips', { 
+            const response = await axios.post(`${baseAPI}/trips`, { 
                 name: newTripName,
                 userId: userData.userId
             });

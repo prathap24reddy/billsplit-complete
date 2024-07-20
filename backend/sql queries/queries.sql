@@ -1,26 +1,3 @@
-CREATE TABLE payment_history (
-    id SERIAL PRIMARY KEY,
-    note TEXT,
-    lenders JSONB,
-    borrowers JSONB,
-    amount DECIMAL(10, 2),
-    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
-CREATE TABLE trips (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL
-);
-
-ALTER TABLE payment_history ADD COLUMN trip_id INTEGER REFERENCES trips(id);
-
-
-
---delete above code.
-
 -- Table to store trips
 CREATE TABLE trips (
     id SERIAL PRIMARY KEY,
@@ -33,6 +10,10 @@ CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
+alter table users
+add email VARCHAR(255) UNIQUE NOT NULL
+password VARCHAR(255) NOT NULL
+
 
 -- Table to manage the many-to-many relationship between trips and users
 CREATE TABLE trip_users (

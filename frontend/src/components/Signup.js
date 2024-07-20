@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function Signup({ onSignup }) {
+function Signup({ onSignup, baseAPI }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,7 +11,7 @@ function Signup({ onSignup }) {
     e.preventDefault();
     setError('');
     try {
-      const response = await axios.post('http://localhost:4000/signup', { name, email, password });
+      const response = await axios.post(`${baseAPI}/signup`, { name, email, password });
       alert(response.data.message);  // Alert the user about successful signup
 
       // Clear the form

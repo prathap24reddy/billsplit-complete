@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function DataEntryTable({ tripId, refreshData, onTransactionSubmitted, editingTransaction }) {
+function DataEntryTable({ tripId, refreshData, onTransactionSubmitted, editingTransaction, baseAPI }) {
     const [data, setData] = useState([]);
     const [tableData, setTableData] = useState([]);
     const [totalLent, setTotalLent] = useState(0);
@@ -13,7 +13,7 @@ function DataEntryTable({ tripId, refreshData, onTransactionSubmitted, editingTr
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:4000/trip_users/${tripId}`);
+            const response = await axios.get(`${baseAPI}/trip_users/${tripId}`);
             setData(response.data);
             // console.log((data.length)/100);
         } catch (error) {
@@ -161,14 +161,14 @@ function DataEntryTable({ tripId, refreshData, onTransactionSubmitted, editingTr
         try {
             let transactionId;
             if (isEditing) {
-                await axios.put(`http://localhost:4000/transaction/${editingTransactionId}`, {
+                await axios.put(`${baseAPI}/transaction/${editingTransactionId}`, {
                     trip_id: tripId,
                     amount: totalLent,
                     note: note
                 });
                 transactionId = editingTransactionId;
             } else {
-                const transactionResponse = await axios.post('http://localhost:4000/transaction', {
+                const transactionResponse = await axios.post(`${baseAPI}/transaction`, {
                     trip_id: tripId,
                     amount: totalLent,
                     note: note
@@ -177,11 +177,11 @@ function DataEntryTable({ tripId, refreshData, onTransactionSubmitted, editingTr
             }
 
             if (isEditing) {
-                await axios.delete(`http://localhost:4000/transaction_users/${editingTransactionId}`);
+                await axios.delete(`${baseAPI}/transaction_users/${editingTransactionId}`);
             }
 
             const transactionUsersPromises = involvedData.map(item =>
-                axios.post('http://localhost:4000/transaction_users', {
+                axios.post(`${baseAPI}/transaction_users`, {
                     transaction_id: transactionId,
                     user_id: item.id,
                     borrow: Number(item.newBorrow) || 0,

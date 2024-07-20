@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function PaymentHistory({ transactions, onEditTransaction, onDeleteTransaction }) {
+function PaymentHistory({ transactions, onEditTransaction, onDeleteTransaction, baseAPI }) {
     const [error, setError] = useState(null);
 
     const handleDelete = async (transactionId) => {
         if (window.confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
             try {
-                await axios.delete(`http://localhost:4000/transaction/${transactionId}`);
+                await axios.delete(`${baseAPI}/transaction/${transactionId}`);
                 onDeleteTransaction(transactionId);
             } catch (error) {
                 console.error('Error deleting transaction:', error);

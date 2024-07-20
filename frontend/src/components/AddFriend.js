@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function AddFriend({ tripId, friends, onFriendAdded }) {
+function AddFriend({ tripId, friends, onFriendAdded, baseAPI }) {
     const [selectedFriendId, setSelectedFriendId] = useState('');
 
     const handleAddFriend = async (e) => {
@@ -9,7 +9,7 @@ function AddFriend({ tripId, friends, onFriendAdded }) {
         if (!selectedFriendId) return;
 
         try {
-            await axios.post('http://localhost:4000/trip_users', {
+            await axios.post(`${baseAPI}/trip_users`, {
                 trip_id: tripId,
                 user_id: selectedFriendId
             });

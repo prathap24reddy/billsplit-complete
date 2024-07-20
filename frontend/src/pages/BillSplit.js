@@ -6,21 +6,21 @@ import DataEntryTable from '../components/DataEntryTable';
 import TotalPayment from '../components/TotalPayment';
 import PaymentHistory from '../components/PaymentHistory';
 
-function BillSplit({userData}) {
-    // console.log(userData);
+function BillSplit({userData, baseAPI}) {
+    // console.log(baseAPI);
     const [selectedTrip, setSelectedTrip] = useState(null);
     const [friends, setFriends] = useState([]);
     const [refresh, setRefresh] = useState(false); // State to trigger refresh
     const [editingTransaction, setEditingTransaction] = useState(null);
     const [transactions, setTransactions] = useState([]);
-
+    // baseAPI={baseAPI}
     const handleTripSelect = (trip) => {
         setSelectedTrip(trip);
     };
 
     const fetchFriends = async () => {
         try {
-            const response = await axios.get('http://localhost:4000/users');
+            const response = await axios.get(`${baseAPI}/users`);
             setFriends(response.data);
         } catch (error) {
             console.error('Error fetching friends:', error);
@@ -29,7 +29,7 @@ function BillSplit({userData}) {
 
     const fetchTransactions = async (tripId) => {
         try {
-            const response = await axios.get(`http://localhost:4000/transaction/${tripId}`);
+            const response = await axios.get(`${baseAPI}/transaction/${tripId}`);
             setTransactions(response.data);
         } catch (error) {
             console.error('Error fetching transactions:', error);
@@ -68,7 +68,11 @@ function BillSplit({userData}) {
 
     return (
         <div>
-            <TripManager onTripSelect={handleTripSelect} userData={userData}/>
+            <TripManager 
+                onTripSelect={handleTripSelect}
+                userData={userData}
+                baseAPI={baseAPI}
+            />
             {selectedTrip && (
                 <>  
                     <div className='box'>
@@ -77,14 +81,23 @@ function BillSplit({userData}) {
                             refreshData={refresh}
                             onTransactionSubmitted={handleTransactionSubmitted}
                             editingTransaction={editingTransaction}
+                            baseAPI={baseAPI}
                         />
-                        <AddFriend tripId={selectedTrip.id} friends={friends} onFriendAdded={handleFriendAdded} />
+                        <AddFriend 
+                            tripId={selectedTrip.id} 
+                            friends={friends} 
+                            onFriendAdded={handleFriendAdded} 
+                            baseAPI={baseAPI} 
+                        />
                     </div>
-                    <TotalPayment transactions={transactions}/>
+                    <TotalPayment 
+                        transactions={transactions}
+                    />
                     <PaymentHistory
                         transactions={transactions}
                         onEditTransaction={handleEditTransaction}
                         onDeleteTransaction={handleDeleteTransaction}
+                        baseAPI={baseAPI} 
                     />
                 </>
             )}
