@@ -4,16 +4,18 @@ import pg from "pg";
 import cors from "cors";
 import jwt from 'jsonwebtoken';
 import bcryptjs from 'bcryptjs';
+import env from 'dotenv';
 
 const app = express();
 const port = 4000;
+env.config();
 
 const db = new pg.Client({
-    user: "postgres",
-    host: "localhost",
-    database: "billsplit",
-    password: "1234",
-    port: 5432,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
 });
 db.connect();
 
